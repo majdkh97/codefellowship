@@ -24,30 +24,45 @@ public class ApplicationUserController {
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @GetMapping("/signup")
-    public String getSignUpPage(){
+    public String getSignUpPage() {
         return "signup.html";
     }
 
     @GetMapping("/login")
-    public String getSignInPage(){
+    public String getSignInPage() {
         return "login.html";
     }
 
     @PostMapping("/signup")
-    public RedirectView signUp(@RequestParam(value="username") String username, @RequestParam(value="password") String password, @RequestParam(value="firstName") String firstName,
-                               @RequestParam(value="lastName") String lastName,@RequestParam(value="dateOfBirth") String dateOfBirth,@RequestParam(value="bio") String bio){
-        ApplicationUser newUser = new ApplicationUser(username,bCryptPasswordEncoder.encode(password),firstName,lastName,dateOfBirth,bio);
+    public RedirectView signUp(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "firstName") String firstName,
+                               @RequestParam(value = "lastName") String lastName, @RequestParam(value = "dateOfBirth") String dateOfBirth, @RequestParam(value = "bio") String bio) {
+        ApplicationUser newUser = new ApplicationUser(username, bCryptPasswordEncoder.encode(password), firstName, lastName, dateOfBirth, bio);
         applicationUserRepository.save(newUser);
         return new RedirectView("/login");
     }
 
 
-
     @GetMapping("/users/{id}")
-    public String albumContent(@PathVariable ("id") Integer id, Model m){
+    public String albumContent(@PathVariable("id") Integer id, Model m) {
         ApplicationUser user = applicationUserRepository.findById(id).get();
         m.addAttribute("user", user);
         return "user.html";
+    }
+
+    @PostMapping("/follow/{id}")
+    public RedirectView followers(Principal p, @PathVariable(value = "id") Integer id) {
+        ApplicationUser user = applicationUserRepository.findById(id).get();
+        ApplicationUser theFollower = applicationUserRepository.findByUsername(p.getName());
+        theFollower.followUser(user);
+        applicationUserRepository.save(theFollower);
+        return new RedirectView("/users/" + id);
+    }
+
+    @GetMapping("/feed")
+    public String showFollowedUsersPosts (Principal p,Model m){
+        ApplicationUser user = applicationUserRepository.findByUsername(p.getName());
+        m.addAttribute("users",user.getFollower());
+        return "feed.html";
     }
 
 }

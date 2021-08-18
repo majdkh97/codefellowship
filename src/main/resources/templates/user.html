@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<header>
+  <h2>UserName: <span th:text="${user.username}"></span></h2>
+</header>
+
+  <img src="https://thumbnail.imgbin.com/25/2/2/imgbin-french-fries-manhattan-potato-festival-potato-race-vegetable-potato-2wfDazYg4FTnPtdtNhDmGtFpm_t.jpg">
+  <div class="container">
+    <p>first name: <span th:text="${user.firstName}"></span></p>
+    <p>last name: <span th:text="${user.lastName}"></span></p>
+    <p>date of birth: <span th:text="${user.dateOfBirth}"></span></p>
+    <p>bio: <span th:text="${user.bio}"></span></p>
+  </div>
+
+<h2>Posts</h2>
+<div th:each="post :${user.posts}">
+  <p>Post: <span th:text="${post.body}"></span></p>
+  <br>
+</div>
+
+</body>
+</html>
